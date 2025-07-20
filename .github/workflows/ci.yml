@@ -1,4 +1,4 @@
-name: Build & Publish Windows Exe
+name: Build & Publish Windows Exe
 
 on:
   push:
@@ -11,23 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Grab your code
       - uses: actions/checkout@v3
 
-      # 2. Install the .NET SDK
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'   # track latest .NET 8 patches
+          dotnet-version: '8.0.x'
 
-      # 3. Restore NuGet packages
       - name: Restore dependencies
         run: dotnet restore
 
-      # 4. Build in Release mode
       - name: Build solution
         run: dotnet build YourSolution.sln --configuration Release --no-restore
 
-      # 5. Publish a self-contained Windows exe
       - name: Publish Windows executable
         run: |
           dotnet publish YourSolution.sln \
@@ -36,9 +31,10 @@ jobs:
             --self-contained true \
             --output ./publish
 
-      # 6. Save the published exe(s) as an artifact
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-exe
           path: publish/
+          retention-days: 30        # optional: customize retention
+          compression-level: 5     # optional: adjust speed vs size
