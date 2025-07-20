@@ -23,6 +23,14 @@ jobs:
       - name: Build solution
         run: dotnet build HorionInjector.sln --configuration Release --no-restore
 
+      - name: Publish Windows executable
+        run: |
+          dotnet publish HorionInjector.sln \
+            --configuration Release \
+            --runtime win-x64 \
+            --self-contained true \
+            --output ./publish
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
