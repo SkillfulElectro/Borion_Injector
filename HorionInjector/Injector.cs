@@ -152,7 +152,7 @@ namespace HorionInjector
             }
 
             SetStatus("injecting into " + process.Id);
-            IntPtr handle = OpenProcess(PROCESS_ALL_ACCESS, false, (uint)process.Id);
+            IntPtr handle = OpenProcess((IntPtr)PROCESS_ALL_ACCESS, false, (uint)process.Id);
             if (handle == IntPtr.Zero || !process.Responding)
             {
                 MessageBox.Show("Failed to get process handle");
