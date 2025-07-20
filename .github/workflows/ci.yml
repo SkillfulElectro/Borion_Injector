@@ -1,4 +1,4 @@
-name: Build & Publish Windows Exe
+name: Build Windows Exe
 
 on:
   push:
@@ -21,15 +21,7 @@ jobs:
         run: dotnet restore
 
       - name: Build solution
-        run: dotnet build YourSolution.sln --configuration Release --no-restore
-
-      - name: Publish Windows executable
-        run: |
-          dotnet publish YourSolution.sln \
-            --configuration Release \
-            --runtime win-x64 \
-            --self-contained true \
-            --output ./publish
+        run: dotnet build HorionInjector.sln --configuration Release --no-restore
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
