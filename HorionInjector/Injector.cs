@@ -49,6 +49,7 @@ namespace HorionInjector
         public static extern bool SetForegroundWindow(IntPtr hWnd);
         //
 
+        // dwDesiredAccess types
         private const uint DELETE                 = 0x00010000;
         private const uint READ_CONTROL           = 0x00020000;
         private const uint WRITE_DAC              = 0x00040000;
@@ -66,7 +67,6 @@ namespace HorionInjector
         private const uint PROCESS_SUSPEND_RESUME = 0x0800;
         private const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
         private const uint END                    = 0x0000FFFF;
-
         private const uint PROCESS_ALL_ACCESS =
             DELETE | READ_CONTROL | WRITE_DAC | WRITE_OWNER |
             SYNCHRONIZE |
@@ -76,6 +76,13 @@ namespace HorionInjector
             PROCESS_SET_QUOTA | PROCESS_SET_INFORMATION |
             PROCESS_SUSPEND_RESUME | PROCESS_QUERY_LIMITED_INFORMATION |
             END;
+
+        // flAllocationType
+        private const uint MEM_COMMIT           = 0x00001000; // reserve + allocate physical pages :contentReference[oaicite:1]{index=1}
+        private const uint MEM_RESERVE          = 0x00002000; // reserve virtual address space only :contentReference[oaicite:2]{index=2}
+
+        // flProtect
+        private const uint PAGE_EXECUTE_READWRITE = 0x40; 
 
         private void Inject(string path)
         {
@@ -152,7 +159,7 @@ namespace HorionInjector
                 goto done;
             }
 
-            IntPtr p1 = VirtualAllocEx(handle, IntPtr.Zero, (uint)(path.Length + 1), 12288U, 64U);
+            IntPtr p1 = VirtualAllocEx(handle, IntPtr.Zero, (uint)(path.Length + 1), MEM_COMMIT | MEM_RESERVE , PAGE_EXECUTE_READWRITE);
             WriteProcessMemory(handle, p1, path.ToCharArray(), path.Length, out IntPtr p2);
             IntPtr procAddress = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
             IntPtr p3 = CreateRemoteThread(handle, IntPtr.Zero, 0U, procAddress, p1, 0U, ref p2);
